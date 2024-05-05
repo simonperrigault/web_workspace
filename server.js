@@ -35,7 +35,7 @@ app.get("/", (req, res) => {
   res.sendFile(__dirname + "/views/index.html");
 });
 
-app.use("/api", (req, res) => {
+app.post("/api", (req, res) => {
   if (req.query.todo === "selectAll") {
     documentClient.scan({ TableName: "sorties" })
     .then((data) => {

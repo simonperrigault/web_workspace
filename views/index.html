@@ -1,26 +1,159 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Simon Workspace</title>
   <link rel="stylesheet" href="/style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
-    $(document).ready(function() {
-      $("button").click(function() {
-        $.get("/api?todo=selectAll&table=sorties", function(data) {
-          for (let i = 0; i < data.length; i++) {
-            item = data[i];
-            $("#to_complete").append("<li>"+item.lieu+"</li>");
+    let types = [];
+    let villes = [];
+    let allSorties = [];
+    let selectedSorties = []
+
+    $(document).ready(function () {
+      $.post('/api', {todo : "selectAll", table : "sorties"}, function(data){
+        allSorties = data;
+        selectedSorties = data;
+        types = [...new Set(data.map(sortie => sortie.type))];
+        villes = [...new Set(data.map(sortie => sortie.ville))];
+
+        types.forEach(type => {
+          $('#selectType').append(`<option value="${type}">${type}</option>`);
+        });
+
+        villes.forEach(ville => {
+          $('#selectVille').append(`<option value="${ville}">${ville}</option>`);
+        });
+
+        data.forEach(sortie => {
+          $('#tableauResultat').append(`
+            <tr>
+              <td>${sortie.lieu}</td>
+              <td>${sortie.type}</td>
+              <td>${sortie.ville}</td>
+              <td>${sortie.note}</td>
+              <td>${sortie.commentaire}</td>
+            </tr>
+          `);
+        });
+      }).fail(function (xhr, status, error) {
+          console.error('There was a problem with the form submission:', error);
+          // Handle error
+      });
+      
+      $('#formAjouter').submit(function (event) {
+        // Prevent the default form submission
+        event.preventDefault();
+
+        // Serialize form data
+        var formData = $(this).serialize();
+
+        // Submit form data via AJAX
+        $.ajax({
+          url: '/api', // Replace '/submit' with your endpoint
+          method: 'POST',
+          data: formData,
+          success: function (data) {
+            console.log('Form submitted successfully:', data);
+            // Handle success response
+          },
+          error: function (xhr, status, error) {
+            console.error('There was a problem with the form submission:', error);
+            // Handle error
           }
+        });
+      });
+      
+      $("#selectType, #selectVille, #selectNote").on("change", () => {
+        console.log("change");
+        selectedSorties = allSorties.filter(sortie => {
+          let type = $("#selectType").val();
+          let ville = $("#selectVille").val();
+          let note = $("#selectNote").val();
+          return (type === "tout" || sortie.type === type) && (ville === "tout" || sortie.ville === ville) && (note === "tout" || sortie.note === note);
+        });
+
+        $('#tableauResultat').empty();
+        selectedSorties.forEach(sortie => {
+          $('#tableauResultat').append(`
+            <tr>
+              <td>${sortie.lieu}</td>
+              <td>${sortie.type}</td>
+              <td>${sortie.ville}</td>
+              <td>${sortie.note}</td>
+              <td>${sortie.commentaire}</td>
+            </tr>
+          `);
         });
       });
     });
   </script>
 </head>
+
 <body>
-  <button>Click Me</button>
-  <ul id="to_complete">
-    <li>First element</li>
-  </ul>
+  <main>
+    <section>
+      <h2>Ajouter une sortie</h2>
+      <form id="formAjouter">
+        <input type="hidden" name="todo" value="insert">
+        <input type="hidden" name="table" value="sorties">
+        <label for="lieu">Lieu :</label>
+        <input type="text" name="lieu" id="lieu" placeholder="Lieu" required>
+        <label for="type">Type :</label>
+        <input type="text" name="type" placeholder="Type" required>
+        <label for="ville">Ville :</label>
+        <input type="text" name="ville" placeholder="Ville" required>
+        <label for="note">Note :</label>
+        <select name="note">
+          <option value="pas bien">Pas bien</option>
+          <option value="moyen">Moyen</option>
+          <option value="bien" selected>Bien</option>
+          <option value="incroyable">Incroyable</option>
+        </select>
+        <label for="commentaire">Commentaire :</label>
+        <textarea name="commentaire" placeholder="Commentaire"></textarea>
+        <button type="submit" id="boutonAjouter">Ajouter</button>
+      </form>
+    </section>
+    <section>
+      <h2>Trouver des sorties</h2>
+      <form id="formTrouver">
+        <input type="hidden" name="todo" value="select">
+        <input type="hidden" name="table" value="sorties">
+        <label for="type">Type :</label>
+        <select name="type" id="selectType">
+          <option value="tout" selected>Tous</option>
+        </select>
+        <label for="ville">Ville :</label>
+        <select name="ville" id="selectVille">
+          <option value="tout" selected>Toutes</option>
+        </select>
+        <label for="note">Note :</label>
+        <select name="note" id="selectNote">
+          <option value="tout" selected>Tout</option>
+          <option value="pas bien">Pas bien</option>
+          <option value="moyen">Moyen</option>
+          <option value="bien">Bien</option>
+          <option value="incroyable">Incroyable</option>
+        </select>
+        <button type="submit" id="boutonTrouver">Afficher</button>
+      </form>
+      <table>
+        <thead>
+          <tr>
+            <th>Lieu</th>
+            <th>Type</th>
+            <th>Ville</th>
+            <th>Note</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody id="tableauResultat">
+        </tbody>
+      </table>
+    </section>
+  </main>
 </body>
+
 </html>
