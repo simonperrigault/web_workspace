@@ -1,0 +1,22 @@
+{
+  "name": "web_workspace",
+  "version": "1.0.0",
+  "description": "Personal workspace",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/simonperrigault/web_workspace.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/simonperrigault/web_workspace/issues"
+  },
+  "homepage": "https://github.com/simonperrigault/web_workspace#readme",
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
