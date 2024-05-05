@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Button Page</title>
+  <title>Simon Workspace</title>
   <link rel="stylesheet" href="/style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script>
     $(document).ready(function() {
       $("button").click(function() {
-        $.get("/api", function(data) {
-          alert(data.message);
+        $.get("/api?todo=selectAll&table=sorties", function(data) {
+          for (let i = 0; i < data.length; i++) {
+            item = data[i];
+            $("#to_complete").append("<li>"+item.lieu+"</li>");
+          }
         });
       });
     });
@@ -16,5 +19,8 @@
 </head>
 <body>
   <button>Click Me</button>
+  <ul id="to_complete">
+    <li>First element</li>
+  </ul>
 </body>
 </html>

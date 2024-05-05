@@ -1,8 +1,30 @@
 const http = require('http');
 const express = require('express');
 
-const app = express();
+const {DynamoDBClient} = require('@aws-sdk/client-dynamodb');
+const {DynamoDBDocument} = require('@aws-sdk/lib-dynamodb');
 
+const pantry = require('pantry-node');
+
+const app = express();
+const pantryClient = new pantry("62b666e2-d83e-4702-ba4c-2e7900b55e4f");
+
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/modules/credentials.html
+const credentials = {
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+};
+
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/s3clientconfig.html
+const config = {
+    region: 'eu-west-3',
+    credentials,
+};
+
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/s3client.html
+const client = new DynamoDBClient({region : "eu-west-3"});
+
+const documentClient = DynamoDBDocument.from(client);
 
 
 // http://expressjs.com/en/starter/static-files.html
@@ -14,54 +36,14 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", (req, res) => {
-  res.status(200).json({ message: 'Hello World!'});
+  if (req.query.todo === "selectAll") {
+    documentClient.scan({ TableName: "sorties" })
+    .then((data) => {
+      res.status(200).json(data.Items);
+    })
+  }
 });
-
-
-
-
-
-const normalizePort = val => {
-  const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
-};
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
-
-const errorHandler = error => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges.');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use.');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-};
 
 const server = http.createServer(app);
 
-server.on('error', errorHandler);
-server.on('listening', () => {
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-  console.log('Listening on ' + bind);
-});
-
-server.listen(port);
+server.listen(process.env.PORT || '3000');
