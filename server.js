@@ -3,7 +3,17 @@ const express = require('express');
 
 const app = express();
 
-app.use("/api", (req, res, next) => {
+
+
+// http://expressjs.com/en/starter/static-files.html
+app.use(express.static("public"));
+
+// http://expressjs.com/en/starter/basic-routing.html
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/views/index.html");
+});
+
+app.use("/api", (req, res) => {
   res.status(200).json({ message: 'Hello World!'});
 });
 

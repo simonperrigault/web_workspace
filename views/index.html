@@ -8,7 +8,7 @@
     $(document).ready(function() {
       $("button").click(function() {
         $.get("/api", function(data) {
-          alert(data);
+          alert(data.message);
         });
       });
     });
