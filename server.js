@@ -1,34 +1,23 @@
-const http = require('http');
-const express = require('express');
-
-const {DynamoDBClient} = require('@aws-sdk/client-dynamodb');
-const {DynamoDBDocument} = require('@aws-sdk/lib-dynamodb');
-
-const pantry = require('pantry-node');
+const http = require("http");
+const express = require("express");
+const cors = require("cors");
+const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
+const {
+  DynamoDBDocument,
+  PutCommand,
+  DeleteCommand,
+} = require("@aws-sdk/lib-dynamodb");
 
 const app = express();
-const pantryClient = new pantry("62b666e2-d83e-4702-ba4c-2e7900b55e4f");
-
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/modules/credentials.html
-const credentials = {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-};
-
-// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/interfaces/s3clientconfig.html
-const config = {
-    region: 'eu-west-3',
-    credentials,
-};
+app.use(express.json()); // for parsing application/json
+app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+app.use(express.static("public")); // http://expressjs.com/en/starter/static-files.html
+app.use(cors());
 
 // https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-s3/classes/s3client.html
-const client = new DynamoDBClient({region : "eu-west-3"});
+const client = new DynamoDBClient({ region: "eu-west-3" });
 
 const documentClient = DynamoDBDocument.from(client);
-
-
-// http://expressjs.com/en/starter/static-files.html
-app.use(express.static("public"));
 
 // http://expressjs.com/en/starter/basic-routing.html
 app.get("/", (req, res) => {
@@ -36,14 +25,57 @@ app.get("/", (req, res) => {
 });
 
 app.post("/api", (req, res) => {
-  if (req.query.todo === "selectAll") {
-    documentClient.scan({ TableName: "sorties" })
-    .then((data) => {
+  if (req.body.todo === "selectAll") {
+    documentClient.scan({ TableName: req.body.table }).then((data) => {
       res.status(200).json(data.Items);
-    })
+    });
+  } else if (req.body.todo === "insert") {
+    const params = {
+      TableName: req.body.table,
+      Item: {
+        id: Math.floor(Date.now() / 1000),
+        lieu: req.body.lieu,
+        ville: req.body.ville,
+        note: req.body.note,
+        commentaire: req.body.commentaire,
+        type: req.body.type,
+      },
+    };
+
+    documentClient
+      .send(new PutCommand(params))
+      .then((data) => {
+        console.log("Item added successfully:", data);
+        res.status(200).json(params.Item);
+      })
+      .catch((error) => {
+        console.error("Error adding item:", error);
+        res.status(400).end();
+      });
+  } else if (req.body.todo === "delete") {
+    const params = {
+      TableName: req.body.table,
+      Key: {
+        id: parseInt(req.body.id, 10), // Specify the value of the id attribute of the item to be deleted
+      },
+    };
+
+    // Execute the delete operation
+    documentClient
+      .send(new DeleteCommand(params))
+      .then((data) => {
+        console.log("Item deleted successfully:", data);
+        res.status(200).send(req.body.id);
+      })
+      .catch((error) => {
+        console.error("Error deleting item:", error);
+        res.status(400).send(error);
+      });
+  } else {
+    res.status(404).end();
   }
 });
 
 const server = http.createServer(app);
 
-server.listen(process.env.PORT || '3000');
+server.listen(process.env.PORT || "3000");

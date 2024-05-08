@@ -5,90 +5,7 @@
   <title>Simon Workspace</title>
   <link rel="stylesheet" href="/style.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script>
-    let types = [];
-    let villes = [];
-    let allSorties = [];
-    let selectedSorties = []
-
-    $(document).ready(function () {
-      $.post('/api', {todo : "selectAll", table : "sorties"}, function(data){
-        allSorties = data;
-        selectedSorties = data;
-        types = [...new Set(data.map(sortie => sortie.type))];
-        villes = [...new Set(data.map(sortie => sortie.ville))];
-
-        types.forEach(type => {
-          $('#selectType').append(`<option value="${type}">${type}</option>`);
-        });
-
-        villes.forEach(ville => {
-          $('#selectVille').append(`<option value="${ville}">${ville}</option>`);
-        });
-
-        data.forEach(sortie => {
-          $('#tableauResultat').append(`
-            <tr>
-              <td>${sortie.lieu}</td>
-              <td>${sortie.type}</td>
-              <td>${sortie.ville}</td>
-              <td>${sortie.note}</td>
-              <td>${sortie.commentaire}</td>
-            </tr>
-          `);
-        });
-      }).fail(function (xhr, status, error) {
-          console.error('There was a problem with the form submission:', error);
-          // Handle error
-      });
-      
-      $('#formAjouter').submit(function (event) {
-        // Prevent the default form submission
-        event.preventDefault();
-
-        // Serialize form data
-        var formData = $(this).serialize();
-
-        // Submit form data via AJAX
-        $.ajax({
-          url: '/api', // Replace '/submit' with your endpoint
-          method: 'POST',
-          data: formData,
-          success: function (data) {
-            console.log('Form submitted successfully:', data);
-            // Handle success response
-          },
-          error: function (xhr, status, error) {
-            console.error('There was a problem with the form submission:', error);
-            // Handle error
-          }
-        });
-      });
-      
-      $("#selectType, #selectVille, #selectNote").on("change", () => {
-        console.log("change");
-        selectedSorties = allSorties.filter(sortie => {
-          let type = $("#selectType").val();
-          let ville = $("#selectVille").val();
-          let note = $("#selectNote").val();
-          return (type === "tout" || sortie.type === type) && (ville === "tout" || sortie.ville === ville) && (note === "tout" || sortie.note === note);
-        });
-
-        $('#tableauResultat').empty();
-        selectedSorties.forEach(sortie => {
-          $('#tableauResultat').append(`
-            <tr>
-              <td>${sortie.lieu}</td>
-              <td>${sortie.type}</td>
-              <td>${sortie.ville}</td>
-              <td>${sortie.note}</td>
-              <td>${sortie.commentaire}</td>
-            </tr>
-          `);
-        });
-      });
-    });
-  </script>
+  <script src="/script.js"></script>
 </head>
 
 <body>
@@ -115,6 +32,9 @@
         <textarea name="commentaire" placeholder="Commentaire"></textarea>
         <button type="submit" id="boutonAjouter">Ajouter</button>
       </form>
+      <p id="pConfirmationAjout">
+        
+      </p>
     </section>
     <section>
       <h2>Trouver des sorties</h2>
@@ -137,11 +57,11 @@
           <option value="bien">Bien</option>
           <option value="incroyable">Incroyable</option>
         </select>
-        <button type="submit" id="boutonTrouver">Afficher</button>
       </form>
       <table>
         <thead>
           <tr>
+            <th>Supprimer</th>
             <th>Lieu</th>
             <th>Type</th>
             <th>Ville</th>
