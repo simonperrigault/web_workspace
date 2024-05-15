@@ -16,7 +16,7 @@ function selectFiltre() {
   selectedSorties.forEach(sortie => {
     $('#tableauResultat').append(`
       <tr>
-        <td><button class="croixSupprimer">X</button><span hidden>${sortie.id}</span</td>
+        <td><i class="fa-solid fa-circle-xmark croixSupprimer"></i><span hidden>${sortie.id}</span</td>
         <td>${sortie.lieu}</td>
         <td>${sortie.type}</td>
         <td>${sortie.ville}</td>
@@ -47,7 +47,7 @@ function actualiserData() {
     data.forEach(sortie => {
       $('#tableauResultat').append(`
         <tr>
-          <td><button class="croixSupprimer">X</button><span hidden>${sortie.id}</span</td>
+          <td><i class="fa-solid fa-circle-xmark croixSupprimer"></i><span hidden>${sortie.id}</span</td>
           <td>${sortie.lieu}</td>
           <td>${sortie.type}</td>
           <td>${sortie.ville}</td>
@@ -91,7 +91,13 @@ $(document).ready(function () {
     event.preventDefault();
 
     // Serialize form data
-    var formData = $(this).serialize();
+    var formData = $(this).serializeArray();
+    for (let i = 0; i < formData.length; i++) {
+      if (formData[i].name === "type") {
+        formData[i].value = formData[i].value.toLowerCase();
+      }
+
+    }
 
     // Submit form data via AJAX
     $.ajax({

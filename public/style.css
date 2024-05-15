@@ -1,0 +1,99 @@
+main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: flex-start;
+    background-color: #ffffff;
+    font-family: "Roboto Light", sans-serif;
+}
+
+@media screen and (max-width: 1000px) {
+    main {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+.flex-column-start {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.flex-row-start {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.flex-row-stretch {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+}
+
+.same-size {
+    flex: 1;
+}
+
+.input-group {
+    margin-right: 20px;
+    margin-bottom: 10px;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+    font-size: large;
+}
+
+.croixSupprimer:hover {
+    cursor: pointer;
+}
+
+.input-group input, .input-group select, .input-group textarea{
+    background-color: #D9D9D9;
+    box-sizing: border-box;
+    width: 100%;
+    color: black;
+    font-size: medium;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.align-stretch {
+    align-items: stretch;
+}
+
+.unique-align-right {
+    text-align: right;
+}
+
+#boutonAjouter {
+    margin: 20px;
+    padding: 10px 30px;
+    font-size: large;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+input, textarea, select {
+    color: grey;
+}
+
+table tr {
+    text-align: center;
+    border-collapse: collapse;
+    border: 1px solid #ccc;
+}
+
+table tr:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+
+table tr td {
+    padding: 5px 10px;
+}

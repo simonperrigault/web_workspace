@@ -1,67 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 
 <head>
   <title>Simon Workspace</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Material+Icons&display=swap">
   <link rel="stylesheet" href="/style.css">
+  <script src="https://kit.fontawesome.com/4722870200.js" crossorigin="anonymous"></script>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="/script.js"></script>
 </head>
 
 <body>
   <main>
-    <section>
+    <section id="leftsection" class="flex-column-start">
       <h2>Ajouter une sortie</h2>
       <form id="formAjouter">
         <input type="hidden" name="todo" value="insert">
         <input type="hidden" name="table" value="sorties">
-        <label for="lieu">Lieu :</label>
-        <input type="text" name="lieu" id="lieu" placeholder="Lieu" required>
-        <label for="type">Type :</label>
-        <input type="text" name="type" placeholder="Type" required>
-        <label for="ville">Ville :</label>
-        <input type="text" name="ville" placeholder="Ville" required>
-        <label for="note">Note :</label>
-        <select name="note">
-          <option value="pas bien">Pas bien</option>
-          <option value="moyen">Moyen</option>
-          <option value="bien" selected>Bien</option>
-          <option value="incroyable">Incroyable</option>
-        </select>
-        <label for="commentaire">Commentaire :</label>
-        <textarea name="commentaire" placeholder="Commentaire"></textarea>
-        <button type="submit" id="boutonAjouter">Ajouter</button>
+        <div class="flex-row-start">
+          <div class="flex-column-start input-group same-size">
+            <label for="lieu">Lieu :</label>
+            <input id="lieu" type="text" name="lieu" required>
+          </div>
+          <div class="flex-column-start input-group same-size">
+            <label for="ville">Ville :</label>
+            <input id="ville" type="text" name="ville" required>
+          </div>
+        </div>
+        <div class="flex-row-start">
+          <div class="flex-column-start input-group same-size">
+            <label for="type">Type :</label>
+            <input id="type" type="text" name="type" required>
+          </div>
+          <div class="flex-column-start align-stretch input-group same-size">
+            <label for="note">Note :</label>
+            <select name="note" id="note">
+              <option value="pas bien">Pas bien</option>
+              <option value="moyen">Moyen</option>
+              <option value="bien" selected>Bien</option>
+              <option value="incroyable">Incroyable</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex-column-start align-stretch input-group">
+          <label for="commentaire">Commentaire :</label>
+          <textarea name="commentaire" id="commentaire"></textarea>
+        </div>
+        <div class="unique-align-right">
+          <button type="submit" id="boutonAjouter">Ajouter</button>
+        </div>
       </form>
       <p id="pConfirmationAjout">
         
       </p>
     </section>
-    <section>
+    <section id="rightsection" class="flex-column-start align-stretch">
       <h2>Trouver des sorties</h2>
-      <form id="formTrouver">
+      <form id="formTrouver" class="flex-row-stretch">
         <input type="hidden" name="todo" value="select">
         <input type="hidden" name="table" value="sorties">
-        <label for="type">Type :</label>
-        <select name="type" id="selectType">
-          <option value="tout" selected>Tous</option>
-        </select>
-        <label for="ville">Ville :</label>
-        <select name="ville" id="selectVille">
-          <option value="tout" selected>Toutes</option>
-        </select>
-        <label for="note">Note :</label>
-        <select name="note" id="selectNote">
-          <option value="tout" selected>Tout</option>
-          <option value="pas bien">Pas bien</option>
-          <option value="moyen">Moyen</option>
-          <option value="bien">Bien</option>
-          <option value="incroyable">Incroyable</option>
-        </select>
+        <div class="flex-column-start input-group same-size">
+          <label for="selectType">Type :</label>
+          <select name="type" id="selectType">
+            <option value="tout" selected>Tous</option>
+          </select>
+        </div>
+        <div class="flex-column-start input-group same-size">
+          <label for="selectVille">Ville :</label>
+          <select name="ville" id="selectVille">
+            <option value="tout" selected>Toutes</option>
+          </select>
+        </div>
+        <div class="flex-column-start input-group same-size">
+          <label for="selectNote">Note :</label>
+          <select name="note" id="selectNote">
+            <option value="tout" selected>Tout</option>
+            <option value="pas bien">Pas bien</option>
+            <option value="moyen">Moyen</option>
+            <option value="bien">Bien</option>
+            <option value="incroyable">Incroyable</option>
+          </select>
+        </div>
       </form>
       <table>
         <thead>
           <tr>
-            <th>Supprimer</th>
+            <th></th>
             <th>Lieu</th>
             <th>Type</th>
             <th>Ville</th>
